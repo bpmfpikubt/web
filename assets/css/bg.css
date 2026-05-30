@@ -1,0 +1,30 @@
+/* ========== BACKGROUND ABOUT PAGE ========== */
+:root {
+    --primary: #0f3b5f;
+    --secondary: #1B9AAA;
+    --accent: #e67e22;
+    --background: #F5F9FC;
+    --text: #1E293B;
+}
+
+body.dark-mode {
+    --primary: #0f3b5f;
+    --secondary: #1B9AAA;
+    --accent: #e67e22;
+    --background: #0f172a;
+    --text: #f1f5f9;
+}
+
+body {
+    background: linear-gradient(rgba(31, 31, 34, 0.272), rgba(214, 213, 255, 0.272)), url('./image-asset/bg-hero.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    backdrop-filter: blur(3px);
+    transition: all 0.5s ease-in-out;
+}
+
+.section-title {
+    color: var(--background);
+}

@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>BPM FPIK UBT | Beranda</title>
+<!-- Google Font Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="icon" href="assets/images/logo-bpm.png">
+<style>
+    /* ========== ROOT VARIABLES ========== */
+    :root {
+        --primary: #0f3b5f;
+        --primary-dark: #0a2a44;
+        --primary-light: #1e5a7d;
+        --secondary: #1B9AAA;
+        --accent: #e67e22;
+        --accent-light: #f39c12;
+        --success: #10b981;
+        --danger: #ef4444;
+        --bg-page: #f5f7fa;
+        --bg-card: #ffffff;
+        --text: #1e293b;
+        --text-light: #64748b;
+        --border: #e2e8f0;
+        --radius: 8px;
+    }
+
+    /* ========== DARK MODE ========== */
+    body.dark-mode {
+        --bg-page: #0f172a;
+        --bg-card: #1e293b;
+        --text: #f1f5f9;
+        --text-light: #94a3b8;
+        --border: #334155;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: var(--bg-page);
+        color: var(--text);
+        line-height: 1.5;
+        transition: background 0.2s, color 0.2s;
+    }
+
+    /* ========== NAVBAR ========== */
+    .navbar {
+        background: var(--bg-card);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 5%;
+        flex-wrap: wrap;
+        gap: 12px;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 200;
+    }
+
+    .logo-area, .logo-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .logo-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .logo-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .logo-area h1 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .nav-menu {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .nav-menu a {
+        color: var(--text-light);
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        padding: 8px 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: color 0.2s;
+    }
+
+    .nav-menu a:hover {
+        color: var(--accent);
+    }
+
+    .theme-toggle {
+        background: var(--bg-page);
+        border: 1px solid var(--border);
+        border-radius: 30px;
+        padding: 6px 14px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text);
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    /* ========== HERO SECTION ========== */
+    .hero {
+        min-height: 60vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        background: linear-gradient(rgba(0, 45, 84, 0.85), rgba(0, 45, 84, 0.85)), url('assets/images/bg-index.webp');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 60px 20px;
+    }
+
+    .hero-content h2 {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+    }
+
+    .hero-content p {
+        max-width: 600px;
+        margin: 0 auto;
+        opacity: 0.9;
+        font-size: 1rem;
+    }
+
+    .btn {
+        display: inline-block;
+        margin-top: 25px;
+        background: var(--accent);
+        padding: 12px 28px;
+        border-radius: 30px;
+        text-decoration: none;
+        color: white;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .btn:hover {
+        background: var(--accent-light);
+        transform: translateY(-2px);
+    }
+
+    /* ========== SECTION ========== */
+    .section {
+        padding: 50px 5%;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 40px;
+        font-size: 1.8rem;
+        font-weight: 600;
+        position: relative;
+        color: var(--text);
+    }
+
+    .section-title::after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 3px;
+        background: var(--accent);
+        margin: 12px auto 0;
+        border-radius: 3px;
+    }
+
+    .card-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+    }
+
+    /* ========== GALLERY CARD ========== */
+    .gallery-card {
+        background: var(--bg-card);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        overflow: hidden;
+        transition: transform 0.2s;
+        cursor: pointer;
+    }
+
+    .gallery-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .gallery-card .card-img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        transition: transform 0.2s;
+    }
+
+    .gallery-card:hover .card-img {
+        transform: scale(1.02);
+    }
+
+    .card-img-changing {
+        animation: imageSlide 0.3s ease;
+    }
+
+    @keyframes imageSlide {
+        0% { opacity: 0.5; transform: scale(0.98); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+
+    .image-counter {
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(4px);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 500;
+        color: white;
+        z-index: 10;
+    }
+
+    .counter-current {
+        color: var(--accent);
+        font-weight: bold;
+    }
+
+    .gallery-card .card-content {
+        padding: 20px;
+        position: relative;
+    }
+
+    .gallery-card .card-content h3 {
+        color: var(--primary);
+        margin-bottom: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .gallery-card .card-content p {
+        color: var(--text-light);
+        font-size: 0.8rem;
+        line-height: 1.5;
+        margin-bottom: 12px;
+    }
+
+    .gallery-card .card-btn {
+        cursor: pointer;
+        border: 1px solid var(--primary);
+        background: transparent;
+        color: var(--primary);
+        padding: 8px 16px;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .gallery-card .card-btn:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    /* ========== MODAL ========== */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.7);
+    }
+
+    .modal-content {
+        background-color: var(--bg-card);
+        margin: 5% auto;
+        width: 90%;
+        max-width: 900px;
+        max-height: 85vh;
+        border-radius: var(--radius);
+        overflow-y: auto;
+        position: relative;
+    }
+
+    .modal-large .modal-content {
+        max-width: 900px;
+    }
+
+    .close {
+        position: sticky;
+        top: 10px;
+        right: 15px;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        color: var(--text-light);
+        background: var(--bg-card);
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        z-index: 1001;
+    }
+
+    .close:hover {
+        color: var(--danger);
+    }
+
+    .modal-gallery-container {
+        position: relative;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .modal-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0,0,0,0.5);
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: background 0.2s;
+    }
+
+    .modal-nav.prev { left: 10px; }
+    .modal-nav.next { right: 10px; }
+    .modal-nav:hover { background: var(--primary); }
+
+    #modal-main-img {
+        width: 100%;
+        max-height: 400px;
+        object-fit: contain;
+        border-radius: var(--radius);
+    }
+
+    .modal-counter {
+        margin: 10px 0;
+        font-size: 0.8rem;
+        color: var(--text-light);
+    }
+
+    .modal-thumbnails {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 15px;
+        flex-wrap: wrap;
+    }
+
+    .modal-thumb {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: var(--radius);
+        cursor: pointer;
+        opacity: 0.6;
+        transition: opacity 0.2s;
+        border: 2px solid transparent;
+    }
+
+    .modal-thumb:hover,
+    .modal-thumb.active {
+        opacity: 1;
+        border-color: var(--accent);
+    }
+
+    #modal-description {
+        padding: 20px;
+        border-top: 1px solid var(--border);
+    }
+
+    #modal-description h2 {
+        color: var(--primary);
+        margin-bottom: 20px;
+    }
+
+    #modal-description h3 {
+        color: var(--secondary);
+        margin-bottom: 10px;
+    }
+
+    /* ========== LOADING & ERROR ========== */
+    .loading-message {
+        text-align: center;
+        padding: 50px;
+        color: var(--text-light);
+    }
+
+    .error-message {
+        text-align: center;
+        padding: 50px;
+        color: var(--danger);
+        background: var(--bg-card);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+    }
+
+    /* ========== FOOTER ========== */
+    footer {
+        background: var(--bg-card);
+        color: var(--text-light);
+        text-align: center;
+        padding: 25px;
+        margin-top: 40px;
+        border-top: 1px solid var(--border);
+        font-size: 0.7rem;
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+        .navbar {
+            flex-direction: column;
+            text-align: center;
+            padding: 12px 5%;
+        }
+        .nav-menu {
+            justify-content: center;
+        }
+        .hero-content h2 {
+            font-size: 1.8rem;
+        }
+        .hero-content p {
+            font-size: 0.85rem;
+        }
+        .section-title {
+            font-size: 1.4rem;
+        }
+        .card-container {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        .gallery-card .card-img {
+            height: 180px;
+        }
+        .modal-nav {
+            width: 32px;
+            height: 32px;
+            font-size: 1rem;
+        }
+        .modal-thumb {
+            width: 50px;
+            height: 50px;
+        }
+        #modal-main-img {
+            max-height: 250px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .hero-content h2 {
+            font-size: 1.4rem;
+        }
+        .section-title {
+            font-size: 1.2rem;
+        }
+    }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+<div class="logo-area">
+    <div class="logo-wrapper">
+        <div class="logo-icon">
+            <img src="assets/images/logo-bpm.png" alt="Logo BPM" onerror="this.src='https://via.placeholder.com/40x40?text=BPM'">
+        </div>
+        <h1>BPM FPIK UBT</h1>
+    </div>
+</div>
+<div class="nav-menu">
+    <a href="index.html"><i class="fas fa-home"></i> Beranda</a>
+    <a href="about.html"><i class="fas fa-info-circle"></i> Tentang</a>
+    <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <i class="fas fa-sun" id="theme-icon"></i>
+        <span id="theme-text">Mode</span>
+    </button>
+</div>
+</nav>
+
+<header class="hero">
+<div class="hero-content">
+<h2>Untuk FPIK Kami Ada.</h2>
+<p>Website resmi Badan Perwakilan Mahasiswa Fakultas Perikanan dan Ilmu Kelautan Universitas Borneo Tarakan.</p>
+<a href="#kegiatan" class="btn">Lihat Kegiatan</a>
+</div>
+</header>
+
+<section class="section" id="kegiatan">
+<h2 class="section-title">Kegiatan BPM</h2>
+<div id="kegiatanContainer" class="card-container">
+    <div class="loading-message"><i class="fas fa-spinner fa-pulse"></i> Memuat data kegiatan...</div>
+</div>
+</section>
+
+<!-- Modal Popup dengan Gallery -->
+<div id="myModal" class="modal">
+<div class="modal-content modal-large">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <div id="modal-body">
+        <div class="modal-gallery-container">
+            <button class="modal-nav prev" onclick="changeModalImage(-1)">❮</button>
+            <img id="modal-main-img" src="" alt="Gallery Image">
+            <button class="modal-nav next" onclick="changeModalImage(1)">❯</button>
+            <div class="modal-counter">
+                <span id="modal-counter-current">1</span> / <span id="modal-counter-total">1</span>
+            </div>
+            <div class="modal-thumbnails" id="modal-thumbnails"></div>
+        </div>
+        <div id="modal-description"></div>
+    </div>
+</div>
+</div>
+
+<footer>
+<p>© 2026 BPM FPIK UBT</p>
+<br><p>Versi 0.1.4 | Home</p>
+</footer>
+
+<script>
+    // ============= KONFIGURASI =============
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwMUBTJbMRuDESPtejkRxXvVp6eGKJVTG8VYEWS9JsUwTXJmC0wiZujYVGvP2syFLBZQw/exec';
+    
+    let kegiatanData = [];
+    let currentModalData = null;
+    let currentModalImageIndex = 0;
+    let autoSlideIntervals = {};
+    let currentImageIndex = {};
+
+    // ============= TOGGLE THEME =============
+    function toggleTheme() {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        const themeIcon = document.getElementById('theme-icon');
+        const themeText = document.getElementById('theme-text');
+        if (themeIcon) {
+            themeIcon.className = isDark ? 'fas fa-moon' : 'fas fa-sun';
+        }
+        if (themeText) {
+            themeText.textContent = isDark ? 'Mode Gelap' : 'Mode Terang';
+        }
+    }
+    
+    function loadTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            const themeIcon = document.getElementById('theme-icon');
+            const themeText = document.getElementById('theme-text');
+            if (themeIcon) themeIcon.className = 'fas fa-moon';
+            if (themeText) themeText.textContent = 'Mode Gelap';
+        }
+    }
+
+    // ============= LOAD DATA =============
+    async function loadKegiatan() {
+        const container = document.getElementById('kegiatanContainer');
+        container.innerHTML = '<div class="loading-message"><i class="fas fa-spinner fa-pulse"></i> Memuat data kegiatan...</div>';
+        
+        try {
+            const response = await fetch(API_URL + '?action=getKegiatan');
+            const result = await response.json();
+            
+            if (result.success && result.data && result.data.length > 0) {
+                kegiatanData = result.data;
+                renderKegiatan();
+            } else {
+                container.innerHTML = '<div class="error-message"><i class="fas fa-info-circle"></i> Belum ada data kegiatan. Silakan tambah melalui admin panel.</div>';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            container.innerHTML = '<div class="error-message"><i class="fas fa-exclamation-triangle"></i> Gagal memuat data kegiatan. Periksa koneksi internet.</div>';
+        }
+    }
+
+    // ============= RENDER KEGIATAN =============
+    function renderKegiatan() {
+        const container = document.getElementById('kegiatanContainer');
+        if (!container) return;
+        
+        let html = '';
+        
+        kegiatanData.forEach((kegiatan, idx) => {
+            let images = [];
+            try {
+                images = JSON.parse(kegiatan.images || '[]');
+            } catch(e) {
+                images = [];
+            }
+            
+            if (images.length === 0) {
+                images = ['https://picsum.photos/id/1/500/300'];
+            }
+            
+            html += `
+                <div class="gallery-card" data-card-id="${idx}">
+                    <img src="${images[0]}" class="card-img" alt="${escapeHtml(kegiatan.title)}" id="card-img-${idx}">
+                    <div class="card-content">
+                        <h3>${escapeHtml(kegiatan.title)}</h3>
+                        <p>${escapeHtml(kegiatan.deskripsi || '')}</p>
+                        <div class="image-counter">
+                            <span class="counter-current" id="counter-current-${idx}">1</span>
+                            <span class="counter-sep">/</span>
+                            <span class="counter-total" id="counter-total-${idx}">${images.length}</span>
+                        </div>
+                        <button class="card-btn" onclick="openModal(${idx})">Selengkapnya</button>
+                    </div>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+        
+        // Inisialisasi untuk setiap card
+        kegiatanData.forEach((_, idx) => {
+            let images = [];
+            try {
+                images = JSON.parse(kegiatanData[idx].images || '[]');
+            } catch(e) {
+                images = [];
+            }
+            if (images.length === 0) images = ['https://picsum.photos/id/1/500/300'];
+            
+            currentImageIndex[idx] = 0;
+            
+            const totalSpan = document.getElementById(`counter-total-${idx}`);
+            if (totalSpan) totalSpan.textContent = images.length;
+            
+            if (images.length > 1) {
+                startAutoSlide(idx, images);
+            }
+        });
+        
+        attachCardEvents();
+    }
+    
+    // ============= AUTO SLIDE =============
+    function startAutoSlide(cardId, images) {
+        if (autoSlideIntervals[cardId]) clearInterval(autoSlideIntervals[cardId]);
+        
+        autoSlideIntervals[cardId] = setInterval(() => {
+            const card = document.querySelector(`.gallery-card[data-card-id="${cardId}"]`);
+            if (card && !card.matches(':hover')) {
+                changeCardImage(cardId, images, 'next');
+            }
+        }, 3000);
+    }
+    
+    function changeCardImage(cardId, images, direction) {
+        if (!images || images.length <= 1) return;
+        
+        if (direction === 'next') {
+            currentImageIndex[cardId] = (currentImageIndex[cardId] + 1) % images.length;
+        } else {
+            currentImageIndex[cardId] = (currentImageIndex[cardId] - 1 + images.length) % images.length;
+        }
+        
+        const imgElement = document.getElementById(`card-img-${cardId}`);
+        const counterCurrent = document.getElementById(`counter-current-${cardId}`);
+        
+        if (imgElement) {
+            imgElement.classList.add('card-img-changing');
+            setTimeout(() => {
+                imgElement.src = images[currentImageIndex[cardId]];
+            }, 50);
+            setTimeout(() => {
+                imgElement.classList.remove('card-img-changing');
+            }, 300);
+        }
+        
+        if (counterCurrent) {
+            counterCurrent.textContent = currentImageIndex[cardId] + 1;
+        }
+    }
+    
+    function attachCardEvents() {
+        document.querySelectorAll('.gallery-card').forEach((card, idx) => {
+            let images = [];
+            try {
+                images = JSON.parse(kegiatanData[idx]?.images || '[]');
+            } catch(e) {
+                images = [];
+            }
+            if (images.length === 0) images = ['https://picsum.photos/id/1/500/300'];
+            
+            card.addEventListener('click', (e) => {
+                if (e.target.classList.contains('card-btn')) return;
+                
+                const rect = card.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const cardWidth = rect.width;
+                
+                if (clickX < cardWidth / 3) {
+                    changeCardImage(idx, images, 'prev');
+                } else if (clickX > (cardWidth * 2 / 3)) {
+                    changeCardImage(idx, images, 'next');
+                } else {
+                    if (currentImageIndex[idx] !== 0) {
+                        currentImageIndex[idx] = 0;
+                        const imgElement = document.getElementById(`card-img-${idx}`);
+                        const counterCurrent = document.getElementById(`counter-current-${idx}`);
+                        if (imgElement) {
+                            imgElement.classList.add('card-img-changing');
+                            setTimeout(() => {
+                                imgElement.src = images[0];
+                            }, 50);
+                            setTimeout(() => {
+                                imgElement.classList.remove('card-img-changing');
+                            }, 300);
+                        }
+                        if (counterCurrent) counterCurrent.textContent = '1';
+                    }
+                }
+            });
+        });
+    }
+    
+    // ============= MODAL =============
+    function openModal(cardId) {
+        const kegiatan = kegiatanData[cardId];
+        if (!kegiatan) return;
+        
+        let images = [];
+        try {
+            images = JSON.parse(kegiatan.images || '[]');
+        } catch(e) {
+            images = [];
+        }
+        
+        if (images.length === 0) {
+            images = ['https://picsum.photos/id/1/500/300'];
+        }
+        
+        currentModalData = {
+            title: kegiatan.title,
+            images: images,
+            deskripsi: kegiatan.deskripsi || '',
+            tujuan: kegiatan.tujuan || '',
+            kontak: kegiatan.kontak || 'Email: bpmfpikubt9@gmail.com'
+        };
+        
+        currentModalImageIndex = currentImageIndex[cardId] || 0;
+        updateModalContent();
+        
+        const modal = document.getElementById("myModal");
+        modal.style.display = "block";
+        document.body.style.overflow = "hidden";
+    }
+    
+    function updateModalContent() {
+        if (!currentModalData) return;
+        
+        const mainImg = document.getElementById('modal-main-img');
+        const counterCurrent = document.getElementById('modal-counter-current');
+        const counterTotal = document.getElementById('modal-counter-total');
+        const descriptionDiv = document.getElementById('modal-description');
+        const thumbnailsDiv = document.getElementById('modal-thumbnails');
+        
+        mainImg.src = currentModalData.images[currentModalImageIndex];
+        counterCurrent.textContent = currentModalImageIndex + 1;
+        counterTotal.textContent = currentModalData.images.length;
+        
+        descriptionDiv.innerHTML = `
+            <h2>${escapeHtml(currentModalData.title)}</h2>
+            <h3>Deskripsi Kegiatan</h3>
+            <p>${escapeHtml(currentModalData.deskripsi)}</p>
+            <h3>Tujuan Kegiatan</h3>
+            <p>${escapeHtml(currentModalData.tujuan)}</p>
+            <h3>Kontak</h3>
+            <p>${escapeHtml(currentModalData.kontak)}</p>
+        `;
+        
+        thumbnailsDiv.innerHTML = '';
+        currentModalData.images.forEach((img, idx) => {
+            const thumb = document.createElement('img');
+            thumb.src = img;
+            thumb.classList.add('modal-thumb');
+            if (idx === currentModalImageIndex) thumb.classList.add('active');
+            thumb.onclick = () => {
+                currentModalImageIndex = idx;
+                updateModalContent();
+            };
+            thumbnailsDiv.appendChild(thumb);
+        });
+    }
+    
+    function changeModalImage(direction) {
+        if (!currentModalData) return;
+        currentModalImageIndex = (currentModalImageIndex + direction + currentModalData.images.length) % currentModalData.images.length;
+        updateModalContent();
+    }
+    
+    function closeModal() {
+        const modal = document.getElementById("myModal");
+        modal.style.display = "none";
+        document.body.style.overflow = "auto";
+    }
+    
+    // ============= UTILITY =============
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    // ============= EVENT LISTENER =============
+    window.onclick = function(event) {
+        const modal = document.getElementById("myModal");
+        if (event.target == modal) closeModal();
+    };
+    
+    document.addEventListener('keydown', function(event) {
+        if (event.key === "Escape") closeModal();
+        if (event.key === "ArrowLeft" && document.getElementById("myModal").style.display === "block") {
+            changeModalImage(-1);
+        }
+        if (event.key === "ArrowRight" && document.getElementById("myModal").style.display === "block") {
+            changeModalImage(1);
+        }
+    });
+    
+    // ============= INITIALIZATION =============
+    loadTheme();
+    loadKegiatan();
+    
+    window.openModal = openModal;
+    window.changeModalImage = changeModalImage;
+    window.closeModal = closeModal;
+    window.toggleTheme = toggleTheme;
+</script>
+
+</body>
+</html>

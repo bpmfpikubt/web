@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>BPM FPIK UBT | Penilaian Kinerja Dosen</title>
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/rate.css">
+    <link rel="icon" href="../assets/images/logo-bpm.png">
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <style>
+        /* Sidebar Drawer Styles - Modern & Keren */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 300;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+        
+        .sidebar-drawer {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 320px;
+            height: 100%;
+            background: var(--bg-card);
+            box-shadow: -8px 0 30px rgba(0, 0, 0, 0.15);
+            z-index: 301;
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid var(--border);
+        }
+        
+        .sidebar-drawer.active {
+            right: 0;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+        
+        .sidebar-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sidebar-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .sidebar-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+        
+        .sidebar-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-card);
+        }
+        
+        .sidebar-profile-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .sidebar-profile-info h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        
+        .sidebar-profile-info p {
+            font-size: 0.7rem;
+            color: var(--text-light);
+        }
+        
+        .sidebar-menu {
+            flex: 1;
+            padding: 15px 0;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 20px;
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.2s;
+            margin: 4px 12px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+        
+        .sidebar-menu a:hover {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            transform: translateX(4px);
+        }
+        
+        .sidebar-menu a:hover i {
+            color: white;
+        }
+        
+        .sidebar-menu a i {
+            width: 24px;
+            font-size: 1.1rem;
+            color: var(--primary);
+            transition: all 0.2s;
+        }
+        
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-light);
+        }
+        
+        .more-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 30px;
+            transition: all 0.2s;
+        }
+        
+        .more-btn:hover {
+            background: var(--bg-page);
+            color: var(--primary);
+        }
+        
+        .more-btn i {
+            font-size: 1rem;
+        }
+        
+        /* Animasi menu items */
+        .sidebar-menu a {
+            animation: slideIn 0.3s ease backwards;
+        }
+        
+        .sidebar-menu a:nth-child(1) { animation-delay: 0.05s; }
+        .sidebar-menu a:nth-child(2) { animation-delay: 0.1s; }
+        .sidebar-menu a:nth-child(3) { animation-delay: 0.15s; }
+        .sidebar-menu a:nth-child(4) { animation-delay: 0.2s; }
+        .sidebar-menu a:nth-child(5) { animation-delay: 0.25s; }
+        .sidebar-menu a:nth-child(6) { animation-delay: 0.3s; }
+        .sidebar-menu a:nth-child(7) { animation-delay: 0.35s; }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="navbar-logo">
+        <div class="logo-icon">
+            <img src="../assets/images/logo-bpm.png" alt="Logo BPM">
+        </div>
+        <h1>BPM FPIK UBT</h1>
+    </div>
+    <div class="nav-menu">
+        <a href="../index.html"><i class="fas fa-home"></i> Beranda</a>
+        <a href="../about.html"><i class="fas fa-info-circle"></i> Tentang</a>
+        <a href="../dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <button class="more-btn" id="moreBtn">
+            <i class="fas fa-th-large"></i> Menu
+        </button>
+        <button class="theme-toggle" onclick="toggleTheme()">
+            <i class="fas fa-sun" id="theme-icon"></i>
+            <span id="theme-text">Mode</span>
+        </button>
+    </div>
+</nav>
+
+<!-- Sidebar Drawer -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="sidebar-drawer" id="sidebarDrawer">
+    <div class="sidebar-header">
+        <h3><i class="fas fa-compass"></i> Menu Navigasi</h3>
+        <button class="sidebar-close" id="sidebarClose"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <div class="sidebar-profile">
+        <div class="sidebar-profile-icon">
+            <i class="fas fa-user-graduate"></i>
+        </div>
+        <div class="sidebar-profile-info">
+            <h4>Mahasiswa FPIK</h4>
+            <p><i class="fas fa-map-marker-alt"></i> Universitas Borneo Tarakan</p>
+        </div>
+    </div>
+    
+    <div class="sidebar-menu">
+        <a href="rate.html"><i class="fas fa-star"></i> Penilaian Dosen</a>
+        <a href="voice.html"><i class="fas fa-comment-dots"></i> Aspirasi</a>
+        <a href="../qr-code.html"><i class="fas fa-qrcode"></i> QR Code</a>
+        <a href="history.html"><i class="fas fa-history"></i> Sejarah BPM</a>
+        <a href="author.html"><i class="fas fa-user"></i> Pengembang</a>
+        <a href="docs.html"><i class="fas fa-download"></i> Berkas Perkuliahan</a>
+        <a href="org.html"><i class="fas fa-file-alt"></i> Administrasi</a>
+    </div>
+    
+    <div class="sidebar-footer">
+        <p>© 2026 BPM FPIK UBT</p>
+        <p style="font-size: 0.6rem; margin-top: 5px;">v.2.0 | Untuk FPIK Kami Ada</p>
+    </div>
+</div>
+
+<section class="section">
+    <div class="penilaian-container">
+        <div class="penilaian-header">
+            <h2><i class="fas fa-star"></i> Penilaian Kinerja Dosen</h2>
+            <p>BPM FPIK UBT | Periode Semester Genap 2025/2026</p>
+        </div>
+
+        <div id="alertMessage" class="alert"></div>
+
+        <div class="info-box">
+            <p><i class="fas fa-info-circle"></i> Penilaian ini akan dikirim langsung ke database BPM FPIK UBT. Identitas responden akan dirahasiakan.</p>
+        </div>
+
+        <form id="penilaianForm">
+            <h3 class="section-title-custom"><i class="fas fa-user"></i> Identitas Responden</h3>
+            <p style="font-size: 0.8rem; color: var(--text-light); margin-bottom: 15px;">Data Anda akan dirahasiakan dan hanya digunakan untuk verifikasi internal.</p>
+            
+            <div class="row-2cols">
+                <div class="form-group">
+                    <label>Nama Lengkap <span class="required">*</span></label>
+                    <input type="text" id="nama" placeholder="Masukkan nama lengkap Anda" required>
+                </div>
+                <div class="form-group">
+                    <label>NPM <span class="required">*</span></label>
+                    <input type="text" id="nim" placeholder="Masukkan NPM (9-10 digit)" required>
+                </div>
+            </div>
+
+            <div class="row-2cols">
+                <div class="form-group">
+                    <label>Program Studi <span class="required">*</span></label>
+                    <select id="prodi" required>
+                        <option value="">Pilih Program Studi</option>
+                        <option value="Akuakultur">Akuakultur</option>
+                        <option value="Manajemen Sumberdaya Perairan">Manajemen Sumberdaya Perairan</option>
+                        <option value="Teknologi Hasil Perikanan">Teknologi Hasil Perikanan</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Semester <span class="required">*</span></label>
+                    <select id="semester" required>
+                        <option value="">Pilih Semester</option>
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                        <option value="3">Semester 3</option>
+                        <option value="4">Semester 4</option>
+                        <option value="5">Semester 5</option>
+                        <option value="6">Semester 6</option>
+                        <option value="7">Semester 7</option>
+                        <option value="8">Semester 8</option>
+                        <option value="9">Semester 9</option>
+                        <option value="10">Semester 10</option>
+                        <option value="11">Semester 11</option>
+                        <option value="12">Semester 12</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Email (Opsional)</label>
+                <input type="email" id="emailResponden" placeholder="Masukkan email untuk mendapat konfirmasi">
+                <small style="color: var(--text-light); font-size: 0.65rem;">Isi jika ingin mendapat salinan penilaian</small>
+            </div>
+
+            <h3 class="section-title-custom"><i class="fas fa-chalkboard-user"></i> Data Dosen yang Dinilai</h3>
+            
+            <div class="form-group">
+                <label>Nama Dosen <span class="required">*</span></label>
+                <select id="namaDosen" required>
+                    <option value="">Pilih Nama Dosen</option>
+                    <option value="Rukisah, S.Pi., MP., Ph.D">Rukisah, S.Pi., MP., Ph.D</option>
+                    <option value="Dr. Heppi Iromo, S.Pi., M.Si">Dr. Heppi Iromo, S.Pi., M.Si</option>
+                    <option value="Dr. Azis, S.Pi., M.Si">Dr. Azis, S.Pi., M.Si</option>
+                    <option value="Jimmy Cahyadi, S.Pi., M.Si">Jimmy Cahyadi, S.Pi., M.Si</option>
+                    <option value="Dr. Ery Gusman, S.Pi., MP">Dr. Ery Gusman, S.Pi., MP</option>
+                    <option value="Dr. Muhammad Amien H, S.Pi., M.Si">Dr. Muhammad Amien H, S.Pi., M.Si</option>
+                    <option value="Dr. Gloria Ika Satriani, S.Pi., M.Si">Dr. Gloria Ika Satriani, S.Pi., M.Si</option>
+                    <option value="Dr. Awaludin, S.Pi., M.Si">Dr. Awaludin, S.Pi., M.Si</option>
+                    <option value="Ricky Febrinaldy S, S.Pd., M.Si">Ricky Febrinaldy S, S.Pd., M.Si</option>
+                    <option value="Zainuddin, S.Pi., M.Sc">Zainuddin, S.Pi., M.Sc</option>
+                    <option value="Burhanuddin Ihsan, S.Pi., M.Sc">Burhanuddin Ihsan, S.Pi., M.Sc</option>
+                    <option value="Diana Maulianawati, S.Pi., M.Si">Diana Maulianawati, S.Pi., M.Si</option>
+                    <option value="Kartina, S.Pd., M.Sc">Kartina, S.Pd., M.Sc</option>
+                    <option value="Miska Sanda Lembang, S.Si., M.Si">Miska Sanda Lembang, S.Si., M.Si</option>
+                    <option value="Diana Purnama Sari, S.Pi., M.Si">Diana Purnama Sari, S.Pi., M.Si</option>
+                    <option value="Rini Mastuti, S.Pi., M.Si">Rini Mastuti, S.Pi., M.Si</option>
+                    <option value="Prof.Dr.Ir. Abdul Jabarsyah, M.Sc">Prof.Dr.Ir. Abdul Jabarsyah, M.Sc</option>
+                    <option value="Dr. Muhammad Firdaus, S.Pi., M.Si">Dr. Muhammad Firdaus, S.Pi., M.Si</option>
+                    <option value="Dr. Amrullah Taqwa, ST., M.Si">Dr. Amrullah Taqwa, ST., M.Si</option>
+                    <option value="Dr. Asbar Laga, ST., M.Si">Dr. Asbar Laga, ST., M.Si</option>
+                    <option value="Dhimas Wiharyanto, S.Pi., M.Si">Dhimas Wiharyanto, S.Pi., M.Si</option>
+                    <option value="Encik Weliyadi, S.Pi., M.Sc">Encik Weliyadi, S.Pi., M.Sc</option>
+                    <option value="Dr. Ratno Achyani, S.Pi., M.Si">Dr. Ratno Achyani, S.Pi., M.Si</option>
+                    <option value="Dr. Dori Rachmawani, S.Pi., M.Si">Dr. Dori Rachmawani, S.Pi., M.Si</option>
+                    <option value="Dr. Muhamad Roem, S.Kel., M.Si">Dr. Muhamad Roem, S.Kel., M.Si</option>
+                    <option value="Gazali Salim, S.Kel., M.Si">Gazali Salim, S.Kel., M.Si</option>
+                    <option value="Yulma, S.Pi., M.Si">Yulma, S.Pi., M.Si</option>
+                    <option value="Heni Irawati, S.Pd., M.Sc">Heni Irawati, S.Pd., M.Sc</option>
+                    <option value="Tuty Alawiyah, S.Si., M.Sc">Tuty Alawiyah, S.Si., M.Sc</option>
+                    <option value="M.Gandri Haryono, S.Kel., M.P">M.Gandri Haryono, S.Kel., M.P</option>
+                    <option value="Syamsidar Gaffar, S.Kel., M.Si">Syamsidar Gaffar, S.Kel., M.Si</option>
+                    <option value="Ardy Andreas Bernard Kase, S.Kel., M.Si">Ardy Andreas Bernard Kase, S.Kel., M.Si</option>
+                    <option value="Dian Islamia Muhtar, S.Pi., M.Si">Dian Islamia Muhtar, S.Pi., M.Si</option>
+                    <option value="Muhammad Yusfi Yusuf, S.Pi., M.Si">Muhammad Yusfi Yusuf, S.Pi., M.Si</option>
+                    <option value="Taufiq Ahmad Romdoni, S.Pi, M.Si">Taufiq Ahmad Romdoni, S.Pi, M.Si</option>
+                    <option value="Yushra, S.Kel., M.Si">Yushra, S.Kel., M.Si</option>
+                    <option value="Ira Maya Abdiani, S.Pi., M.Sc">Ira Maya Abdiani, S.Pi., M.Sc</option>
+                    <option value="M. Fadnan Akhmadi, S.Pi., M.Sc">M. Fadnan Akhmadi, S.Pi., M.Sc</option>
+                    <option value="Tri Paus Hasiholan Hutapea, S.Si., M.Si">Tri Paus Hasiholan Hutapea, S.Si., M.Si</option>
+                    <option value="Imra, S.Pi., M.Si">Imra, S.Pi., M.Si</option>
+                    <option value="Nurhikma, S.Pi., M.Si">Nurhikma, S.Pi., M.Si</option>
+                    <option value="Stephanie Bija, S.Pd., M.Si">Stephanie Bija, S.Pd., M.Si</option>
+                    <option value="Novi Luthfiyana, S.Pi., M.Si">Novi Luthfiyana, S.Pi., M.Si</option>
+                    <option value="Christine Dyta Nugraeni, S.Si., M.Si">Christine Dyta Nugraeni, S.Si., M.Si</option>
+                    <option value="Reni Tri Cahyani, S.Pi., M.Si">Reni Tri Cahyani, S.Pi., M.Si</option>
+                    <option value="Sumarlin, S.Si., M.Si">Sumarlin, S.Si., M.Si</option>
+                    <option value="Nurasmi, S.Pd., M.Si">Nurasmi, S.Pd., M.Si</option>
+                    <option value="Mutmainnah, S.Kel., M.Si">Mutmainnah, S.Kel., M.Si</option>
+                    <option value="Arlina Hidayati, S.Pi., M.Si">Arlina Hidayati, S.Pi., M.Si</option>
+                    <option value="Nurmaida, S.Pi., M.Si">Nurmaida, S.Pi., M.Si</option>
+                    <option value="Istiqamah Muslimin, S.Pi., M.Si">Istiqamah Muslimin, S.Pi., M.Si</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Mata Kuliah <span class="required">*</span></label>
+                <input type="text" id="matakuliah" placeholder="Masukkan nama mata kuliah" required>
+            </div>
+
+            <h3 class="section-title-custom"><i class="fas fa-star"></i> Penilaian Kinerja Dosen</h3>
+            
+            <div class="rating-container">
+                <div class="rating-item">
+                    <span class="rating-label">1. Penguasaan Materi</span>
+                    <div class="stars">
+                        <input type="radio" name="rating_materi" value="1" id="materi1"><label for="materi1">★</label>
+                        <input type="radio" name="rating_materi" value="2" id="materi2"><label for="materi2">★</label>
+                        <input type="radio" name="rating_materi" value="3" id="materi3"><label for="materi3">★</label>
+                        <input type="radio" name="rating_materi" value="4" id="materi4"><label for="materi4">★</label>
+                        <input type="radio" name="rating_materi" value="5" id="materi5"><label for="materi5">★</label>
+                    </div>
+                </div>
+
+                <div class="rating-item">
+                    <span class="rating-label">2. Metode Penyampaian</span>
+                    <div class="stars">
+                        <input type="radio" name="rating_metode" value="1" id="metode1"><label for="metode1">★</label>
+                        <input type="radio" name="rating_metode" value="2" id="metode2"><label for="metode2">★</label>
+                        <input type="radio" name="rating_metode" value="3" id="metode3"><label for="metode3">★</label>
+                        <input type="radio" name="rating_metode" value="4" id="metode4"><label for="metode4">★</label>
+                        <input type="radio" name="rating_metode" value="5" id="metode5"><label for="metode5">★</label>
+                    </div>
+                </div>
+
+                <div class="rating-item">
+                    <span class="rating-label">3. Kehadiran & Ketepatan Waktu</span>
+                    <div class="stars">
+                        <input type="radio" name="rating_kehadiran" value="1" id="kehadiran1"><label for="kehadiran1">★</label>
+                        <input type="radio" name="rating_kehadiran" value="2" id="kehadiran2"><label for="kehadiran2">★</label>
+                        <input type="radio" name="rating_kehadiran" value="3" id="kehadiran3"><label for="kehadiran3">★</label>
+                        <input type="radio" name="rating_kehadiran" value="4" id="kehadiran4"><label for="kehadiran4">★</label>
+                        <input type="radio" name="rating_kehadiran" value="5" id="kehadiran5"><label for="kehadiran5">★</label>
+                    </div>
+                </div>
+
+                <div class="rating-item">
+                    <span class="rating-label">4. Interaksi dengan Mahasiswa</span>
+                    <div class="stars">
+                        <input type="radio" name="rating_interaksi" value="1" id="interaksi1"><label for="interaksi1">★</label>
+                        <input type="radio" name="rating_interaksi" value="2" id="interaksi2"><label for="interaksi2">★</label>
+                        <input type="radio" name="rating_interaksi" value="3" id="interaksi3"><label for="interaksi3">★</label>
+                        <input type="radio" name="rating_interaksi" value="4" id="interaksi4"><label for="interaksi4">★</label>
+                        <input type="radio" name="rating_interaksi" value="5" id="interaksi5"><label for="interaksi5">★</label>
+                    </div>
+                </div>
+
+                <div class="rating-item">
+                    <span class="rating-label">5. Keadilan Penilaian</span>
+                    <div class="stars">
+                        <input type="radio" name="rating_keadilan" value="1" id="keadilan1"><label for="keadilan1">★</label>
+                        <input type="radio" name="rating_keadilan" value="2" id="keadilan2"><label for="keadilan2">★</label>
+                        <input type="radio" name="rating_keadilan" value="3" id="keadilan3"><label for="keadilan3">★</label>
+                        <input type="radio" name="rating_keadilan" value="4" id="keadilan4"><label for="keadilan4">★</label>
+                        <input type="radio" name="rating_keadilan" value="5" id="keadilan5"><label for="keadilan5">★</label>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="section-title-custom"><i class="fas fa-comment"></i> Kritik & Saran</h3>
+            
+            <div class="feedback-grid">
+                <div class="form-group">
+                    <label>Kelebihan Dosen</label>
+                    <textarea id="kelebihan" rows="4" placeholder="Apa kelebihan dosen ini?"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Saran Perbaikan</label>
+                    <textarea id="kekurangan" rows="4" placeholder="Apa yang perlu ditingkatkan?"></textarea>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">
+                <i class="fas fa-paper-plane"></i> Kirim Penilaian
+            </button>
+        </form>
+
+        <div class="progress-section">
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <p class="progress-text">Penilaian Anda sangat berharga untuk peningkatan kualitas pendidikan di FPIK UBT</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>© 2026 BPM FPIK UBT | Badan Perwakilan Mahasiswa Fakultas Perikanan dan Ilmu Kelautan</p>
+    <p style="font-size: 0.65rem; margin-top: 8px;">Version: 4.0.0 | Sistem Penilaian Kinerja Dosen</p>
+</footer>
+
+<script src="../assets/js/rate.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // ============= SIDEBAR DRAWER =============
+    const moreBtn = document.getElementById('moreBtn');
+    const sidebar = document.getElementById('sidebarDrawer');
+    const overlay = document.getElementById('sidebarOverlay');
+    const closeBtn = document.getElementById('sidebarClose');
+    
+    function openSidebar() {
+        sidebar.classList.add('active');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeSidebar() {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    if (moreBtn) moreBtn.addEventListener('click', openSidebar);
+    if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+    if (overlay) overlay.addEventListener('click', closeSidebar);
+    
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+            closeSidebar();
+        }
+    });
+
+    // ============= TOGGLE THEME =============
+    function toggleTheme() {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        const themeIcon = document.getElementById('theme-icon');
+        const themeText = document.getElementById('theme-text');
+        if (themeIcon) {
+            themeIcon.className = isDark ? 'fas fa-moon' : 'fas fa-sun';
+        }
+        if (themeText) {
+            themeText.textContent = isDark ? 'Mode Gelap' : 'Mode Terang';
+        }
+    }
+    
+    function loadTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            const themeIcon = document.getElementById('theme-icon');
+            const themeText = document.getElementById('theme-text');
+            if (themeIcon) themeIcon.className = 'fas fa-moon';
+            if (themeText) themeText.textContent = 'Mode Gelap';
+        }
+    }
+    
+    loadTheme();
+</script>
+
+<script src="../assets/js/main.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,226 @@
+/* ========== PENILAIAN DOSEN STYLES ========== */
+.penilaian-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 30px;
+    border: 1px solid var(--border);
+}
+
+.penilaian-header {
+    text-align: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border);
+}
+
+.penilaian-header h2 {
+    color: var(--primary);
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+.penilaian-header p {
+    color: var(--text-light);
+    font-size: 0.8rem;
+}
+
+.info-box {
+    background: var(--bg-page);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    margin-bottom: 25px;
+}
+
+.info-box p {
+    font-size: 0.75rem;
+    color: var(--text-light);
+}
+
+.section-title-custom {
+    color: var(--primary);
+    margin: 25px 0 15px;
+    font-size: 1rem;
+    font-weight: 600;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--accent);
+    display: inline-block;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: var(--text);
+    font-size: 0.8rem;
+}
+
+.form-group label .required {
+    color: var(--danger);
+    margin-left: 3px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 0.85rem;
+    background: var(--bg-card);
+    color: var(--text);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.row-2cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.rating-container {
+    background: var(--bg-page);
+    padding: 16px;
+    border-radius: var(--radius);
+    margin: 15px 0;
+}
+
+.rating-item {
+    margin-bottom: 16px;
+}
+
+.rating-label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--text);
+    font-size: 0.8rem;
+}
+
+.stars {
+    display: flex;
+    gap: 6px;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+}
+
+.stars input {
+    display: none;
+}
+
+.stars label {
+    font-size: 24px;
+    color: var(--border);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.stars input:checked ~ label,
+.stars label:hover,
+.stars label:hover ~ label {
+    color: var(--accent);
+}
+
+.feedback-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 15px 0;
+}
+
+.btn-submit {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.2s;
+}
+
+.btn-submit:hover {
+    background: var(--primary-dark);
+}
+
+.alert {
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+    display: none;
+}
+
+.alert.success {
+    background: var(--success);
+    color: white;
+    display: block;
+}
+
+.alert.error {
+    background: var(--danger);
+    color: white;
+    display: block;
+}
+
+.progress-section {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.3s;
+}
+
+.progress-text {
+    font-size: 0.65rem;
+    color: var(--text-light);
+}
+
+@media (max-width: 768px) {
+    .penilaian-container {
+        padding: 20px;
+        margin: 0 15px;
+    }
+    
+    .row-2cols {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .feedback-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .stars label {
+        font-size: 20px;
+    }
+}

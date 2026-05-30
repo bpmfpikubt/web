@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Registrasi Mahasiswa - BPM FPIK UBT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <link rel="icon" href="../assets/images/logo-bpm.png">
+    <style>
+        :root {
+            --primary: #0f3b5f;
+            --primary-dark: #0a2a44;
+            --bg-page: #f5f7fa;
+            --bg-card: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --radius: 8px;
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+
+        body.dark-mode {
+            --bg-page: #0f172a;
+            --bg-card: #1e293b;
+            --text: #f1f5f9;
+            --text-light: #94a3b8;
+            --border: #334155;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-page);
+            color: var(--text);
+            min-height: 100vh;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .navbar {
+            background: var(--bg-card);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 5%;
+            flex-wrap: wrap;
+            gap: 12px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 200;
+        }
+
+        .navbar-logo { display: flex; align-items: center; gap: 10px; }
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .logo-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .navbar-logo h1 { font-size: 1.2rem; font-weight: 600; color: var(--text); }
+        .nav-menu { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+        .nav-menu a { color: var(--text-light); text-decoration: none; font-size: 0.85rem; font-weight: 500; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+        .nav-menu a:hover { color: var(--primary); }
+        .theme-toggle {
+            background: var(--bg-page);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 6px 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .register-container {
+            max-width: 520px;
+            margin: 60px auto;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 32px;
+            border: 1px solid var(--border);
+        }
+        .register-container h2 { color: var(--primary); text-align: center; margin-bottom: 8px; font-size: 1.5rem; }
+        .register-container .subtitle { text-align: center; color: var(--text-light); font-size: 0.8rem; margin-bottom: 28px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-weight: 600; color: var(--primary); margin-bottom: 6px; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group label .required { color: var(--danger); }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            background: var(--bg-card);
+            color: var(--text);
+            transition: border 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); }
+        .row-2cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .btn-register {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+        .btn-register:hover { background: var(--primary-dark); }
+        .btn-register:disabled { background: var(--text-light); cursor: not-allowed; }
+        .btn-login-link { text-align: center; margin-top: 20px; font-size: 0.8rem; color: var(--text-light); }
+        .btn-login-link a { color: var(--primary); text-decoration: none; font-weight: 600; }
+        footer { background: var(--bg-card); color: var(--text-light); text-align: center; padding: 25px; margin-top: 60px; border-top: 1px solid var(--border); font-size: 0.7rem; }
+
+        @media (max-width: 640px) {
+            .register-container { margin: 30px 20px; padding: 24px; }
+            .row-2cols { grid-template-columns: 1fr; gap: 0; }
+            .register-container h2 { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="navbar-logo">
+        <div class="logo-icon">
+            <img src="../assets/images/logo-bpm.png" alt="Logo BPM">
+        </div>
+        <h1>BPM FPIK UBT</h1>
+    </div>
+    <div class="nav-menu">
+        <a href="../index.html"><i class="fas fa-home"></i> Beranda</a>
+        <a href="../about.html"><i class="fas fa-info-circle"></i> Tentang</a>
+        <button class="theme-toggle" onclick="toggleTheme()">
+            <i class="fas fa-sun" id="theme-icon"></i>
+            <span id="theme-text">Mode Terang</span>
+        </button>
+    </div>
+</nav>
+
+<section style="padding: 40px 8%;">
+    <div class="register-container">
+        <div class="logo-icon" style="margin: 0 auto 20px;">
+            <img src="../assets/images/logo-bpm.png" alt="Logo BPM">
+        </div>
+        <h2>Registrasi Mahasiswa</h2>
+        <p class="subtitle">Daftar akun untuk mengakses portal mahasiswa BPM FPIK UBT</p>
+        
+        <form id="registerForm">
+            <div class="form-group">
+                <label>NPM <span class="required">*</span></label>
+                <input type="text" id="nim" placeholder="Masukkan NPM (9-10 digit)" required autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label>Nama Lengkap <span class="required">*</span></label>
+                <input type="text" id="nama" placeholder="Masukkan nama lengkap" required>
+            </div>
+            <div class="form-group">
+                <label>Password <span class="required">*</span></label>
+                <input type="password" id="password" placeholder="Minimal 6 karakter" required>
+            </div>
+            <div class="form-group">
+                <label>Konfirmasi Password <span class="required">*</span></label>
+                <input type="password" id="confirmPassword" placeholder="Ulangi password" required>
+            </div>
+            <div class="row-2cols">
+                <div class="form-group">
+                    <label>Program Studi <span class="required">*</span></label>
+                    <select id="prodi" required>
+                        <option value="">Pilih Program Studi</option>
+                        <option value="Akuakultur">Akuakultur</option>
+                        <option value="Manajemen Sumberdaya Perairan">Manajemen Sumberdaya Perairan</option>
+                        <option value="Teknologi Hasil Perikanan">Teknologi Hasil Perikanan</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Semester <span class="required">*</span></label>
+                    <select id="semester" required>
+                        <option value="">Pilih Semester</option>
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                        <option value="3">Semester 3</option>
+                        <option value="4">Semester 4</option>
+                        <option value="5">Semester 5</option>
+                        <option value="6">Semester 6</option>
+                        <option value="7">Semester 7</option>
+                        <option value="8">Semester 8</option>
+                        <option value="9">Semester 9</option>
+                        <option value="10">Semester 10</option>
+                        <option value="11">Semester 11</option>
+                        <option value="12">Semester 12</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn-register" id="submitBtn">
+                <i class="fas fa-user-plus"></i> Daftar
+            </button>
+        </form>
+        
+        <div class="btn-login-link">
+            Sudah punya akun? <a href="login.html">Login di sini</a>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>© 2026 BPM FPIK UBT | Badan Perwakilan Mahasiswa Fakultas Perikanan dan Ilmu Kelautan</p>
+    <p style="font-size: 0.65rem; margin-top: 8px;">Registrasi Mahasiswa</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzLBu2gB9lCSRp6qdDYygbF1Cf5Ks2GrMoc5PdhwqnujsQlEhi_Ee0Fm_IsRKk6oRqT2g/exec';
+    
+    const form = document.getElementById('registerForm');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    async function showAlert(message, type) {
+        const titles = {
+            success: 'Berhasil!',
+            error: 'Gagal!',
+            warning: 'Peringatan!',
+            info: 'Informasi'
+        };
+        
+        await Swal.fire({
+            title: titles[type] || titles.info,
+            text: message,
+            icon: type,
+            confirmButtonColor: '#0f3b5f'
+        });
+    }
+    
+    function toggleTheme() {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        const themeIcon = document.getElementById('theme-icon');
+        const themeText = document.getElementById('theme-text');
+        if (themeIcon) themeIcon.className = isDark ? 'fas fa-moon' : 'fas fa-sun';
+        if (themeText) themeText.textContent = isDark ? 'Mode Gelap' : 'Mode Terang';
+    }
+    
+    function loadTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            const themeIcon = document.getElementById('theme-icon');
+            const themeText = document.getElementById('theme-text');
+            if (themeIcon) themeIcon.className = 'fas fa-moon';
+            if (themeText) themeText.textContent = 'Mode Gelap';
+        }
+    }
+    
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const nim = document.getElementById('nim').value.trim();
+        const nama = document.getElementById('nama').value.trim();
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const prodi = document.getElementById('prodi').value;
+        const semester = document.getElementById('semester').value;
+        
+        if (!nim || !nama || !password || !prodi || !semester) {
+            await showAlert('Harap isi semua field!', 'error');
+            return;
+        }
+        if (!/^\d{9,10}$/.test(nim)) {
+            await showAlert('NPM harus 9-10 digit angka!', 'error');
+            return;
+        }
+        if (password.length < 6) {
+            await showAlert('Password minimal 6 karakter!', 'error');
+            return;
+        }
+        if (password !== confirmPassword) {
+            await showAlert('Password dan konfirmasi password tidak sama!', 'error');
+            return;
+        }
+        
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Mendaftar...';
+        
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({
+                    action: 'mahasiswaRegister',
+                    nim: nim,
+                    nama: nama,
+                    password: password,
+                    prodi: prodi,
+                    semester: semester
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                await showAlert(result.message, 'success');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+            } else {
+                await showAlert(result.message, 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Daftar';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            await showAlert('Terjadi kesalahan. Silakan coba lagi.', 'error');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Daftar';
+        }
+    });
+    
+    loadTheme();
+    window.toggleTheme = toggleTheme;
+</script>
+</body>
+</html>
