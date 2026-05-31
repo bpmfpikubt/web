@@ -1,6 +1,6 @@
 // ========== GOOGLE APPS SCRIPT - BPM FPIK UBT ==========
-// FULL VERSION: Penilaian Dosen + Anggota BPM + Kegiatan + Aspirasi + Berkas + Login Mahasiswa + Upload Foto Profil
-// Version: 8.0.0
+// FULL VERSION: Penilaian Dosen + Anggota BPM + Kegiatan + Aspirasi + Berkas + Mahasiswa + Statistik + Visitor
+// Version: 7.0.0 - FIXED
 
 // ========== KONFIGURASI UTAMA ==========
 const SPREADSHEET_ID = '1z4M_Gwnn_017BaTGxeNzj84gSBbTbwigY7_o2mAP43M';
@@ -12,7 +12,7 @@ function doGet(e) {
   try {
     const action = e && e.parameter ? e.parameter.action : null;
     
-    // Fitur Penilaian Dosen (lama)
+    // Fitur Penilaian Dosen
     if (action === 'getData') {
       const data = getAllDataFromSpreadsheet();
       return response(true, "Data berhasil diambil", data);
@@ -22,30 +22,25 @@ function doGet(e) {
       return response(true, "Statistik berhasil diambil", stats);
     }
     
-    // Fitur Baru
+    // Fitur CRUD
     if (action === 'getAnggota') return respond(getAnggota());
     if (action === 'getKegiatan') return respond(getKegiatan());
     if (action === 'getAspirasi') return respond(getAspirasi());
     if (action === 'getBerkas') return respond(getBerkas());
     
-    // Fitur Login Mahasiswa
-    if (action === 'verifyMahasiswaToken') {
-      const result = verifyMahasiswaToken(e);
-      return ContentService.createTextOutput(JSON.stringify(result))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
+    // Fitur Mahasiswa
+    if (action === 'getMahasiswaCount') return respond(getMahasiswaCount());
     
-    // Fitur Foto Profil Mahasiswa
-    if (action === 'getFotoMahasiswa') {
-      const result = getFotoMahasiswa(e);
-      return ContentService.createTextOutput(JSON.stringify(result))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
+    // Fitur Statistik & Visitor
+    if (action === 'getDashboardStats') return respond(getDashboardStats());
+    if (action === 'getVisitorStats') return respond(getVisitorStats());
+    if (action === 'getDailyVisits') return respond(getDailyVisits());
+    if (action === 'getVisitorLog') return respond(getVisitorLog());
     
     return ContentService.createTextOutput(JSON.stringify({
       success: true,
       status: "active",
-      version: "8.0.0",
+      version: "7.0.0",
       message: "API BPM FPIK UBT siap digunakan",
       timestamp: new Date().toISOString()
     })).setMimeType(ContentService.MimeType.JSON);
@@ -82,51 +77,41 @@ function doPost(e) {
       return handlePenilaianDosen(params);
     }
     
-    // Fitur Baru - Anggota
+    // Fitur Anggota
     if (action === 'tambahAnggota') return respond(tambahAnggota(params));
     if (action === 'updateAnggota') return respond(updateAnggota(params));
     if (action === 'hapusAnggota') return respond(hapusAnggota(params));
     if (action === 'uploadFotoAnggota') return respond(uploadFotoAnggota(params));
     
-    // Fitur Baru - Kegiatan
+    // Fitur Kegiatan
     if (action === 'tambahKegiatan') return respond(tambahKegiatan(params));
     if (action === 'updateKegiatan') return respond(updateKegiatan(params));
     if (action === 'hapusKegiatan') return respond(hapusKegiatan(params));
     if (action === 'uploadFotoKegiatan') return respond(uploadFotoKegiatan(params));
     if (action === 'hapusFotoKegiatan') return respond(hapusFotoKegiatan(params));
     
-    // Fitur Baru - Aspirasi
+    // Fitur Aspirasi Admin
     if (action === 'updateStatusAspirasi') return respond(updateStatusAspirasi(params));
     
-    // Fitur Baru - Berkas
+    // ========== FITUR ASPIRASI DARI WEBSITE (DITAMBAHKAN) ==========
+    if (action === 'kirimAspirasi') return respond(kirimAspirasi(params));
+    
+    // Fitur Berkas
     if (action === 'uploadBerkas') return respond(uploadBerkas(params));
     if (action === 'hapusBerkas') return respond(hapusBerkas(params));
     
-    // Fitur Login Mahasiswa
-    if (action === 'mahasiswaRegister') {
-      const result = mahasiswaRegister(params);
-      return ContentService.createTextOutput(JSON.stringify(result))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-    if (action === 'mahasiswaLogin') {
-      const result = mahasiswaLogin(params);
-      return ContentService.createTextOutput(JSON.stringify(result))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-    if (action === 'mahasiswaLogout') {
-      const result = mahasiswaLogout(params);
-      return ContentService.createTextOutput(JSON.stringify(result))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
+    // Fitur Mahasiswa
+    if (action === 'mahasiswaRegister') return respond(mahasiswaRegister(params));
+    if (action === 'mahasiswaLogin') return respond(mahasiswaLogin(params));
+    if (action === 'mahasiswaLogout') return respond(mahasiswaLogout(params));
+    if (action === 'uploadFotoMahasiswa') return respond(uploadFotoMahasiswa(params));
+    if (action === 'verifyMahasiswaToken') return respond(verifyMahasiswaToken(params));
+    if (action === 'getFotoMahasiswa') return respond(getFotoMahasiswa(params));
     
-    // Fitur Foto Profil Mahasiswa
-    if (action === 'uploadFotoMahasiswa') {
-      const result = uploadFotoMahasiswa(params);
-      return ContentService.createTextOutput(JSON.stringify(result))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
+    // Fitur Visitor
+    if (action === 'recordVisitor') return respond(recordVisitor(params));
     
-    return response(false, "Aksi tidak dikenal");
+    return response(false, "Aksi tidak dikenal: " + action);
     
   } catch(error) {
     return response(false, error.toString());
@@ -296,58 +281,7 @@ function sendEmailNotification(data) {
   } catch(error) {}
 }
 
-function clearAllData() {
-  try {
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const sheet = ss.getSheetByName(SHEET_NAME_PENILAIAN);
-    if (sheet) {
-      const lastRow = sheet.getLastRow();
-      if (lastRow > 1) sheet.deleteRows(2, lastRow - 1);
-    }
-    return "Semua data berhasil dihapus";
-  } catch(error) {
-    return "Error: " + error.toString();
-  }
-}
-
-function checkSheetStructure() {
-  try {
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const sheet = ss.getSheetByName(SHEET_NAME_PENILAIAN);
-    if (!sheet) return "Sheet belum dibuat";
-    return {
-      sheetName: SHEET_NAME_PENILAIAN,
-      rowCount: sheet.getLastRow(),
-      columnCount: sheet.getLastColumn(),
-      status: "Aktif"
-    };
-  } catch(error) {
-    return "Error: " + error.toString();
-  }
-}
-
-// ==================== FITUR BARU ====================
-// ========== UTILITY ==========
-function getSheet(name) {
-  return SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(name);
-}
-
-function ensureSheet(name, headers) {
-  let sheet = getSheet(name);
-  if (!sheet) {
-    sheet = SpreadsheetApp.openById(SPREADSHEET_ID).insertSheet(name);
-    sheet.appendRow(headers);
-  }
-  return sheet;
-}
-
-function formatDate(date) {
-  if (!date) return '-';
-  const d = new Date(date);
-  return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}`;
-}
-
-// ========== ANGGOTA BPM ==========
+// ==================== ANGGOTA BPM ====================
 function getAnggota() {
   const sheet = getSheet('anggota');
   if (!sheet) return { success: true, data: [] };
@@ -425,20 +359,14 @@ function uploadFotoAnggota(e) {
       return { success: false, error: "Sheet 'anggota' tidak ditemukan" };
     }
     
-    const lastRow = sheet.getLastRow();
-    if (rowIndex > lastRow) {
-      return { success: false, error: "RowIndex tidak valid" };
-    }
-    
     sheet.getRange(rowIndex, 5).setValue(fotoUrl);
-    
     return { success: true, url: fotoUrl };
   } catch(error) {
     return { success: false, error: error.toString() };
   }
 }
 
-// ========== KEGIATAN ==========
+// ==================== KEGIATAN ====================
 function getKegiatan() {
   const sheet = getSheet('kegiatan');
   if (!sheet) return { success: true, data: [] };
@@ -543,7 +471,7 @@ function hapusFotoKegiatan(e) {
   }
 }
 
-// ========== ASPIRASI ==========
+// ==================== ASPIRASI ====================
 function getAspirasi() {
   const sheet = getSheet('aspirasi');
   if (!sheet) return { success: true, data: [] };
@@ -581,7 +509,40 @@ function updateStatusAspirasi(e) {
   }
 }
 
-// ========== BERKAS ==========
+// ========== FITUR ASPIRASI DARI WEBSITE (DITAMBAHKAN) ==========
+function kirimAspirasi(e) {
+  try {
+    // Pastikan sheet aspirasi ada dengan struktur yang benar
+    let sheet = getSheet('aspirasi');
+    if (!sheet) {
+      sheet = ensureSheet('aspirasi', ['Timestamp', 'Nama', 'NIM', 'Kategori', 'Pesan', 'Status']);
+    } else {
+      // Cek apakah kolom Status ada, jika tidak tambahkan
+      const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+      if (headers.length < 6 || headers[5] !== 'Status') {
+        sheet.getRange(1, 6).setValue('Status');
+      }
+    }
+    
+    const now = new Date();
+    const formattedDate = Utilities.formatDate(now, "Asia/Makassar", "dd/MM/yyyy HH:mm:ss");
+    
+    sheet.appendRow([
+      formattedDate,
+      e.nama || '-',
+      e.nim || '-',
+      e.kategori || '-',
+      e.pesan || '-',
+      'Belum Dibaca'
+    ]);
+    
+    return { success: true, message: 'Aspirasi berhasil dikirim' };
+  } catch(error) {
+    return { success: false, error: error.toString() };
+  }
+}
+
+// ==================== BERKAS ====================
 function getBerkas() {
   const sheet = getSheet('berkas');
   if (!sheet) return { success: true, data: [] };
@@ -615,17 +576,35 @@ function uploadBerkas(e) {
     const kategori = e.kategori;
     const deskripsi = e.deskripsi;
     
+    // Validasi input
+    if (!judul || !namaFile || !base64) {
+      return { success: false, error: "Data tidak lengkap" };
+    }
+    
+    // Decode base64
     const blob = Utilities.newBlob(Utilities.base64Decode(base64), getMimeType(namaFile), namaFile);
-    const folder = DriveApp.getFolderById('11PyZsyuJtPyGV_OIoyXRO1ZRWFk_VAML');
+    
+    // Upload ke Google Drive
+    // GANTI DENGAN ID FOLDER ANDA
+    const FOLDER_ID = '11PyZsyuJtPyGV_OIoyXRO1ZRWFk_VAML';
+    let folder;
+    try {
+      folder = DriveApp.getFolderById(FOLDER_ID);
+    } catch(e) {
+      // Jika folder tidak ditemukan, buat folder baru
+      folder = DriveApp.createFolder('BPM_Berkas');
+    }
+    
     const file = folder.createFile(blob);
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
     
+    // Simpan ke sheet
     const sheet = ensureSheet('berkas', ['ID', 'Judul', 'Kategori', 'Deskripsi', 'Link', 'Nama File', 'Tanggal', 'File ID']);
     const id = Utilities.getUuid();
     
     sheet.appendRow([id, judul, kategori, deskripsi, file.getUrl(), namaFile, new Date(), file.getId()]);
     
-    return { success: true };
+    return { success: true, message: "Berkas berhasil diupload", url: file.getUrl() };
   } catch(error) {
     return { success: false, error: error.toString() };
   }
@@ -639,7 +618,9 @@ function hapusBerkas(e) {
     if (fileId && fileId !== 'undefined') {
       try {
         DriveApp.getFileById(fileId).setTrashed(true);
-      } catch(err) {}
+      } catch(err) {
+        console.log("File tidak ditemukan di Drive:", err);
+      }
     }
     
     const sheet = getSheet('berkas');
@@ -653,7 +634,7 @@ function hapusBerkas(e) {
   }
 }
 
-// ========== MAHASISWA (REGISTER, LOGIN, LOGOUT) ==========
+// ==================== MAHASISWA ====================
 function mahasiswaRegister(e) {
   const nim = e.nim || '';
   const nama = e.nama || '';
@@ -675,8 +656,7 @@ function mahasiswaRegister(e) {
   
   let sheet = getSheet('mahasiswa');
   if (!sheet) {
-    sheet = SpreadsheetApp.openById(SPREADSHEET_ID).insertSheet('mahasiswa');
-    sheet.appendRow(['NIM', 'Nama', 'Password', 'Prodi', 'Semester', 'Status', 'Token', 'FotoUrl']);
+    sheet = ensureSheet('mahasiswa', ['NIM', 'Nama', 'Password', 'Prodi', 'Semester', 'Status', 'Token', 'FotoUrl']);
   }
   
   const data = sheet.getDataRange().getValues();
@@ -740,7 +720,7 @@ function mahasiswaLogin(e) {
 }
 
 function verifyMahasiswaToken(e) {
-  const token = e.parameter.token || '';
+  const token = e.token || '';
   const cache = CacheService.getScriptCache();
   const sessionData = cache.get(token);
   
@@ -785,7 +765,6 @@ function mahasiswaLogout(e) {
   return { success: true, message: 'Logout berhasil' };
 }
 
-// ========== FOTO PROFIL MAHASISWA ==========
 function uploadFotoMahasiswa(e) {
   try {
     const nim = e.nim || '';
@@ -817,8 +796,8 @@ function uploadFotoMahasiswa(e) {
 
 function getFotoMahasiswa(e) {
   try {
-    const nim = e.parameter.nim || '';
-    const token = e.parameter.token || '';
+    const nim = e.nim || '';
+    const token = e.token || '';
     
     const sheet = getSheet('mahasiswa');
     if (!sheet) {
@@ -837,6 +816,321 @@ function getFotoMahasiswa(e) {
   } catch(error) {
     return { success: false, fotoUrl: '' };
   }
+}
+
+// ==================== STATISTIK DASHBOARD ====================
+function getDashboardStats() {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    
+    // Count Mahasiswa
+    let mahasiswaCount = 0;
+    const mahasiswaSheet = ss.getSheetByName('mahasiswa');
+    if (mahasiswaSheet) {
+      const mahasiswaData = mahasiswaSheet.getDataRange().getValues();
+      mahasiswaCount = Math.max(0, mahasiswaData.length - 1);
+    }
+    
+    // Count Penilaian
+    let penilaianCount = 0;
+    const penilaianSheet = ss.getSheetByName('penilaian');
+    if (penilaianSheet) {
+      const penilaianData = penilaianSheet.getDataRange().getValues();
+      penilaianCount = Math.max(0, penilaianData.length - 1);
+    }
+    
+    // Count Aspirasi
+    let aspirasiCount = 0;
+    const aspirasiSheet = ss.getSheetByName('aspirasi');
+    if (aspirasiSheet) {
+      const aspirasiData = aspirasiSheet.getDataRange().getValues();
+      aspirasiCount = Math.max(0, aspirasiData.length - 1);
+    }
+    
+    // Count Kegiatan
+    let kegiatanCount = 0;
+    const kegiatanSheet = ss.getSheetByName('kegiatan');
+    if (kegiatanSheet) {
+      const kegiatanData = kegiatanSheet.getDataRange().getValues();
+      kegiatanCount = Math.max(0, kegiatanData.length - 1);
+    }
+    
+    // Count Anggota
+    let anggotaCount = 0;
+    const anggotaSheet = ss.getSheetByName('anggota');
+    if (anggotaSheet) {
+      const anggotaData = anggotaSheet.getDataRange().getValues();
+      anggotaCount = Math.max(0, anggotaData.length - 1);
+    }
+    
+    // Count Berkas
+    let berkasCount = 0;
+    const berkasSheet = ss.getSheetByName('berkas');
+    if (berkasSheet) {
+      const berkasData = berkasSheet.getDataRange().getValues();
+      berkasCount = Math.max(0, berkasData.length - 1);
+    }
+    
+    // Hitung rata-rata rating dosen
+    let totalRating = 0;
+    let ratingCount = 0;
+    if (penilaianSheet) {
+      const penilaianData = penilaianSheet.getDataRange().getValues();
+      for (let i = 1; i < penilaianData.length; i++) {
+        const rating = parseFloat(penilaianData[i][13]);
+        if (rating >= 1 && rating <= 5) {
+          totalRating += rating;
+          ratingCount++;
+        }
+      }
+    }
+    const avgRating = ratingCount > 0 ? (totalRating / ratingCount).toFixed(1) : "0";
+    
+    // Hitung aspirasi berdasarkan status
+    let aspirasiBelum = 0;
+    let aspirasiDibaca = 0;
+    let aspirasiTindak = 0;
+    if (aspirasiSheet) {
+      const aspirasiData = aspirasiSheet.getDataRange().getValues();
+      for (let i = 1; i < aspirasiData.length; i++) {
+        const status = aspirasiData[i][5] || 'Belum Dibaca';
+        if (status === 'Belum Dibaca') aspirasiBelum++;
+        else if (status === 'Sudah Dibaca') aspirasiDibaca++;
+        else if (status === 'Dalam Tindak Lanjut') aspirasiTindak++;
+      }
+    }
+    
+    return {
+      success: true,
+      data: {
+        mahasiswa: mahasiswaCount,
+        penilaian: penilaianCount,
+        aspirasi: aspirasiCount,
+        kegiatan: kegiatanCount,
+        anggota: anggotaCount,
+        berkas: berkasCount,
+        avgRating: avgRating,
+        aspirasiStatus: {
+          belum: aspirasiBelum,
+          dibaca: aspirasiDibaca,
+          tindakLanjut: aspirasiTindak
+        },
+        lastUpdate: new Date().toISOString()
+      }
+    };
+  } catch(error) {
+    return { success: false, error: error.toString() };
+  }
+}
+
+function getMahasiswaCount() {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = ss.getSheetByName('mahasiswa');
+    
+    if (!sheet) return { success: true, data: 0 };
+    
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { success: true, data: 0 };
+    
+    let count = 0;
+    for (let i = 1; i < data.length; i++) {
+      if (data[i][5] === 'aktif') count++;
+    }
+    
+    return { success: true, data: count };
+  } catch(error) {
+    return { success: false, error: error.toString() };
+  }
+}
+
+// ==================== VISITOR COUNTER ====================
+function recordVisitor(data) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    let sheet = ss.getSheetByName('visitor_log');
+    
+    if (!sheet) {
+      sheet = ss.insertSheet('visitor_log');
+      sheet.appendRow(['ID', 'VisitorID', 'IP', 'Page', 'UserAgent', 'VisitTime', 'IsMahasiswa', 'Referrer', 'Device']);
+    }
+    
+    const id = Utilities.getUuid();
+    const now = new Date();
+    
+    let device = 'Unknown';
+    const ua = data.userAgent || '';
+    if (ua.includes('Mobile')) device = 'Mobile';
+    else if (ua.includes('Tablet')) device = 'Tablet';
+    else if (ua.includes('Mac') || ua.includes('Windows') || ua.includes('Linux')) device = 'Desktop';
+    
+    sheet.appendRow([
+      id,
+      data.visitorId || '-',
+      data.ip || '-',
+      data.page || '-',
+      (data.userAgent || '-').substring(0, 200),
+      now,
+      data.isMahasiswa || 'tidak',
+      data.referrer || '-',
+      device
+    ]);
+    
+    return { success: true, id: id };
+  } catch(error) {
+    return { success: false, error: error.toString() };
+  }
+}
+
+function getVisitorStats() {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    let sheet = ss.getSheetByName('visitor_log');
+    
+    if (!sheet) {
+      return { 
+        success: true, 
+        data: { 
+          totalVisitors: 0, 
+          todayVisitors: 0, 
+          weekVisitors: 0, 
+          monthVisitors: 0, 
+          pageViews: 0,
+          lastUpdate: new Date().toISOString()
+        } 
+      };
+    }
+    
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) {
+      return { 
+        success: true, 
+        data: { 
+          totalVisitors: 0, 
+          todayVisitors: 0, 
+          weekVisitors: 0, 
+          monthVisitors: 0, 
+          pageViews: 0,
+          lastUpdate: new Date().toISOString()
+        } 
+      };
+    }
+    
+    const uniqueVisitors = new Set();
+    let todayCount = 0;
+    let weekCount = 0;
+    let monthCount = 0;
+    
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    
+    for (let i = 1; i < data.length; i++) {
+      const visitorId = data[i][1];
+      const visitTime = data[i][5] instanceof Date ? data[i][5] : new Date(data[i][5]);
+      
+      if (visitorId && visitorId !== '-') uniqueVisitors.add(visitorId);
+      
+      if (visitTime >= today) todayCount++;
+      if (visitTime >= weekAgo) weekCount++;
+      if (visitTime >= monthAgo) monthCount++;
+    }
+    
+    return { 
+      success: true, 
+      data: { 
+        totalVisitors: uniqueVisitors.size,
+        todayVisitors: todayCount,
+        weekVisitors: weekCount,
+        monthVisitors: monthCount,
+        pageViews: data.length - 1,
+        lastUpdate: new Date().toISOString()
+      } 
+    };
+  } catch(error) {
+    return { success: false, error: error.toString() };
+  }
+}
+
+function getDailyVisits() {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = ss.getSheetByName('visitor_log');
+    
+    if (!sheet) return { success: true, data: [] };
+    
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { success: true, data: [] };
+    
+    const dailyMap = new Map();
+    
+    for (let i = 1; i < data.length; i++) {
+      const visitTime = data[i][5] instanceof Date ? data[i][5] : new Date(data[i][5]);
+      const dateKey = visitTime.toISOString().split('T')[0];
+      
+      dailyMap.set(dateKey, (dailyMap.get(dateKey) || 0) + 1);
+    }
+    
+    const result = [];
+    for (const [date, count] of dailyMap) {
+      result.push({ date: date, count: count });
+    }
+    
+    result.sort((a, b) => a.date.localeCompare(b.date));
+    return { success: true, data: result.slice(-7) };
+  } catch(error) {
+    return { success: false, error: error.toString() };
+  }
+}
+
+function getVisitorLog(limit = 30) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = ss.getSheetByName('visitor_log');
+    
+    if (!sheet) return { success: true, data: [] };
+    
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { success: true, data: [] };
+    
+    const logs = [];
+    for (let i = data.length - 1; i >= 1 && logs.length < limit; i--) {
+      logs.push({
+        id: data[i][0],
+        visitorId: data[i][1],
+        page: data[i][3],
+        userAgent: data[i][4],
+        visitTime: data[i][5] instanceof Date ? data[i][5].toISOString() : data[i][5],
+        isMahasiswa: data[i][6],
+        device: data[i][8] || 'Unknown'
+      });
+    }
+    
+    return { success: true, data: logs };
+  } catch(error) {
+    return { success: false, error: error.toString() };
+  }
+}
+
+// ==================== UTILITY ====================
+function getSheet(name) {
+  return SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(name);
+}
+
+function ensureSheet(name, headers) {
+  let sheet = getSheet(name);
+  if (!sheet) {
+    sheet = SpreadsheetApp.openById(SPREADSHEET_ID).insertSheet(name);
+    sheet.appendRow(headers);
+  }
+  return sheet;
+}
+
+function formatDate(date) {
+  if (!date) return '-';
+  const d = new Date(date);
+  return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}`;
 }
 
 function getMimeType(fileName) {

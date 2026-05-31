@@ -8,6 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <!-- CSS -->
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="icon" href="../assets/images/logo-bpm.png">
@@ -546,21 +548,31 @@
     <p style="font-size: 0.65rem; margin-top: 8px;">Version: 2.0 | Aspirasi Mahasiswa</p>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     // ============= KONFIGURASI =============
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwMUBTJbMRuDESPtejkRxXvVp6eGKJVTG8VYEWS9JsUwTXJmC0wiZujYVGvP2syFLBZQw/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxnjsPPQfPkJGZxDH5sbaAcYqbc0TARxkkSTBALaZViNpCv1qr99zYP1LkZO6SjkDkFVQ/exec';
     
     const form = document.getElementById('aspirasiForm');
     const alertBox = document.getElementById('alertBox');
     const submitBtn = document.getElementById('submitBtn');
     
-    function showAlert(message, type) {
-        alertBox.textContent = message;
-        alertBox.className = `alert ${type}`;
-        setTimeout(() => {
-            alertBox.style.display = 'none';
-            alertBox.className = 'alert';
-        }, 5000);
+    async function showAlert(message, type) {
+        const titles = {
+            success: 'Berhasil!',
+            error: 'Gagal!',
+            warning: 'Peringatan!',
+            info: 'Informasi'
+        };
+        
+        alertBox.style.display = 'none';
+        
+        await Swal.fire({
+            title: titles[type] || titles.info,
+            text: message,
+            icon: type,
+            confirmButtonColor: '#0f3b5f'
+        });
     }
     
     function resetForm() {
@@ -579,31 +591,31 @@
         const pesan = document.getElementById('pesan').value.trim();
         
         if (!nama) {
-            showAlert('Harap isi nama lengkap Anda', 'error');
+            await showAlert('Harap isi nama lengkap Anda', 'error');
             document.getElementById('nama').focus();
             return;
         }
         
         if (!nim) {
-            showAlert('Harap isi NIM Anda', 'error');
+            await showAlert('Harap isi NIM/NPM Anda', 'error');
             document.getElementById('nim').focus();
             return;
         }
         
         if (!kategori) {
-            showAlert('Harap pilih kategori aspirasi', 'error');
+            await showAlert('Harap pilih kategori aspirasi', 'error');
             document.getElementById('kategori').focus();
             return;
         }
         
         if (!pesan) {
-            showAlert('Harap tulis pesan aspirasi Anda', 'error');
+            await showAlert('Harap tulis pesan aspirasi Anda', 'error');
             document.getElementById('pesan').focus();
             return;
         }
         
         if (pesan.length < 10) {
-            showAlert('Pesan terlalu pendek. Minimal 10 karakter.', 'error');
+            await showAlert('Pesan terlalu pendek. Minimal 10 karakter.', 'error');
             return;
         }
         
@@ -612,9 +624,10 @@
         submitBtn.textContent = 'Mengirim...';
         
         try {
+            // PERBAIKAN: mode diubah ke 'cors' dengan headers
             await fetch(API_URL, {
                 method: 'POST',
-                mode: 'no-cors',
+                mode: 'cors',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
@@ -627,12 +640,12 @@
                 })
             });
             
-            showAlert('Terima kasih! Aspirasi Anda telah terkirim. Kami akan segera menindaklanjutinya.', 'success');
+            await showAlert('Terima kasih! Aspirasi Anda telah terkirim. Kami akan segera menindaklanjutinya.', 'success');
             resetForm();
             
         } catch (error) {
             console.error('Error:', error);
-            showAlert('Gagal mengirim aspirasi. Silakan cek koneksi internet Anda dan coba lagi.', 'error');
+            await showAlert('Gagal mengirim aspirasi. Silakan cek koneksi internet Anda dan coba lagi.', 'error');
         } finally {
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
@@ -696,7 +709,8 @@
     loadTheme();
 </script>
 
+<!-- Global scripts -->
 <script src="../assets/js/main.js"></script>
-
+<script src="../assets/js/visitor-tracker.js"></script>
 </body>
 </html>

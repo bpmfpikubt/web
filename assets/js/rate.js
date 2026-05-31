@@ -1,5 +1,5 @@
 // ============= KONFIGURASI =============
-const API_URL = 'https://script.google.com/macros/s/AKfycbwMUBTJbMRuDESPtejkRxXvVp6eGKJVTG8VYEWS9JsUwTXJmC0wiZujYVGvP2syFLBZQw/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxnjsPPQfPkJGZxDH5sbaAcYqbc0TARxkkSTBALaZViNpCv1qr99zYP1LkZO6SjkDkFVQ/exec';
 
 const form = document.getElementById('penilaianForm');
 const alertBox = document.getElementById('alertMessage');
