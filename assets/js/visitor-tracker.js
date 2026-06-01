@@ -3,7 +3,7 @@
 // Untuk mencatat kunjungan ke website
 // ============================================
 
-const TRACKER_API_URL = 'https://script.google.com/macros/s/AKfycbxnjsPPQfPkJGZxDH5sbaAcYqbc0TARxkkSTBALaZViNpCv1qr99zYP1LkZO6SjkDkFVQ/exec';
+const TRACKER_API_URL = 'https://bpm-proxy.bpmdatabase5.workers.dev/';
 
 /**
  * Generate unique visitor ID

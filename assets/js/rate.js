@@ -1,5 +1,5 @@
 // ============= KONFIGURASI =============
-const API_URL = 'https://script.google.com/macros/s/AKfycbxnjsPPQfPkJGZxDH5sbaAcYqbc0TARxkkSTBALaZViNpCv1qr99zYP1LkZO6SjkDkFVQ/exec';
+const API_URL = 'https://bpm-proxy.bpmdatabase5.workers.dev/';
 
 const form = document.getElementById('penilaianForm');
 const alertBox = document.getElementById('alertMessage');
